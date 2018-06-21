@@ -1,6 +1,6 @@
 $(document).ready(function(){
 /* 1. Before you can make any part of our site work, you need to create an array of strings, each one related to a topic that interests you. Save it to a variable called `topics`.
-   * We chose animals for our theme, but you can make a list to your own liking. */
+    */
   var topicsArr = [
     "Westworld",
     "Game of Thrones",
@@ -9,8 +9,7 @@ $(document).ready(function(){
     "Black Mirror"
 ];
     
-//
-    //$("#button").on("click", function(){
+
        
 
 /* 2. Your app should take the topics in this array and create buttons in your HTML.
@@ -83,24 +82,20 @@ $(document).ready(function(){
         
     $(document).on("click", ".topics-btn", dataPull);
 
-            function animateGifs(){
+         //   function animateGifs(){
+                $(".image-gifs").on("click", function() {
                 var state = $(this).attr("data-state");
-                var position = $(this).attr("data-position"); //will return a string
-                position = parseInt(position); //string to integer
-
-                console.log(results[position].images.fixed_height.url);
-                console.log(position);
+                
 
                 if (state === "still") {
-                console.log("we're here");
                     $(this).attr("src", results[position].images.fixed_height.url);
                     $(this).attr("data-state", "animate");
                 } else {
                     $(this).attr("src", results[position].images.fixed_height_still.url);
                     $(this).attr("data-state", "still");
-                } //ends ifelse
-            };//ends function
-            
+                } //ends if else
+           // }; //ends function
+        });
             
     $(document).on("click", ".image-gifs", animateGifs);
 
