@@ -1,102 +1,111 @@
-$(document).ready(function(){
-/* 1. Before you can make any part of our site work, you need to create an array of strings, each one related to a topic that interests you. Save it to a variable called `topics`.
-    */
-  var topicsArr = [
-    "Westworld",
-    "Game of Thrones",
-    "Stranger Things",
-    "Lost in Space",
-    "Black Mirror"
-];
+$(document).ready(function(){  //Code will only run once the page DOM is ready for JavaScript code to execute
+
+    var topicsArr = [ //create array of topics (tv shows)
+        "Westworld",
+        "Game of Thrones",
+        "Stranger Things",
+        "Lost in Space",
+        "Black Mirror"
+    ];
     
-
-       
-
-/* 2. Your app should take the topics in this array and create buttons in your HTML.
-    * Try using a loop that appends a button for each string in the array. */
-
-    function makeButton(){
-        $("#buttonsHere").empty();
+    function makeButton(){ //main function to create buttons from the array 
+        $("#buttonsHere").empty(); //clears out previous gifs
         
-        for (var i = 0; i < topicsArr.length; i++){
+        for (var i = 0; i < topicsArr.length; i++){ //for loop to create each button from the array
 
-            var newButton = $("<button>");
-            newButton.addClass("topics-btn");
-            newButton.attr("data-topic", topicsArr[i]);
-            newButton.text(topicsArr[i]);
+            var newButton = $("<button>"); // adds button
+            newButton.addClass("topics-btn"); //adds class to button
+            newButton.attr("data-topic", topicsArr[i]); // gets data 
+            newButton.text(topicsArr[i]); //adds text to button
 
-            $("#buttonsHere").append(newButton);
+            $("#buttonsHere").append(newButton); //appends each new button after the previous
         }
     }
-        
-    //
+   
+    makeButton(); //calls create button function
     
-    $("#add-topic").on("click", function(event){
-            event.preventDefault();
-            
-        var topic = $("#topic-input").val().trim();
-        topicsArr.push(topic);
+    $("#add-topic").on("click", function(event){ // click event to make form button functional
+            event.preventDefault();        
+        var newTopic = $("#topic-input").val().trim(); // get the values of input element, trims any extra spaces
+        topicsArr.push(newTopic); //pushes new button that user input to the array
 
-        makeButton();
+        makeButton(); //calls to loop with new button
     });
 
-    makeButton();
+   
+    
 
     function dataPull(){
         var topicInput = $(this).attr("data-topic");
         var topicStr = topicInput.split(" ").join("+");
         var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
         topicStr + "&api_key=sSZl7RKHXQaveXriP5j1W48d3dWoe2FP&limit=10";
+        
         $.ajax({
             url: queryURL,
             method: "GET"
         }).done(function(response){
             
-            console.log(response.data)
+            console.log(response)
             
+            var results = response.data;
             
             $("#gifsHere").empty();
-            for(var j = 0; j < response.data.length; j++) {    
+            for(var j = 0; j < results.length; j++) {    
 
                 var displayDiv = $("<div>");
                 var image = $("<img>");
                 
                 image.addClass("image-gifs");
-                image.attr("src", response.data[j].images.original_still.url);
-                image.attr("data-still", response.data[j].images.original_still.url);
-                image.attr("data-animate", response.data[j].images.original.url);
+                image.attr("src", results[j].images.original_still.url);
+                image.attr("data-still", results[j].images.original_still.url);
+                image.attr("data-animate", results[j].images.original.url);
                 image.attr("data-state", "still");
-                image.attr("class", "gif");
+                
                 displayDiv.append(image);
 
-                var rating = response.data[j].rating;
-                console.log(response);
+                var rating = results[j].rating;
+                
                 var pRating = $("<p>").text("Rating: " + rating);
                 displayDiv.append(pRating)
 
                 $("#gifsHere").append(displayDiv);
-            }; //ends forloop
-        }); //ends ajax
+            }; //ends for loop
+
+
+            $(document).on("click", ".topics-btn", dataPull);
+
+                   $(".image-gifs").on("click", function() {
+                   var state = $(this).attr("data-state");  
+   
+                if (state === "still") {
+                   $(this).attr("src", $(this).attr("data-animate"));
+                   $(this).attr("data-state", "animate");
+                } else {
+                   $(this).attr("src", $(this).attr("data-still"));
+                   $(this).attr("data-state", "still");
+                 } 
+           });
+
+        }); //ends ajax response function
 
     }; //ends dataPull function
         
     $(document).on("click", ".topics-btn", dataPull);
+    
+            $(".image-gifs").on("click", function() {
+            var state = $(this).attr("data-state");
 
-         //   function animateGifs(){
-                $(".image-gifs").on("click", function() {
-                var state = $(this).attr("data-state");
-                
-
-                if (state === "still") {
-                    $(this).attr("src", results[position].images.fixed_height.url);
-                    $(this).attr("data-state", "animate");
-                } else {
-                    $(this).attr("src", results[position].images.fixed_height_still.url);
-                    $(this).attr("data-state", "still");
-                } //ends if else
-           // }; //ends function
+            if (state === "still") {
+                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("data-state", "animate");
+            } else {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still");
+            } 
+     
         });
             
-    $(document).on("click", ".image-gifs", animateGifs);
+    $(document).on("click", ".image-gifs");
 
 });
